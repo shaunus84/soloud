@@ -5,8 +5,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 project(soloud)
 
 set (TARGET_NAME soloud)
-set (HEADER_PATH ../include)
-set (SOURCE_PATH ../src)
+set (HEADER_PATH include)
+set (SOURCE_PATH src)
 
 # Headers
 set (TARGET_HEADERS
