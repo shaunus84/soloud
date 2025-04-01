@@ -18,11 +18,11 @@ option(SOLOUD_BACKEND_WINMM "Enable WinMM backend (Windows)" OFF)
 option(SOLOUD_BACKEND_WASAPI "Enable WASAPI backend (Windows)" OFF)
 
 # === Paths ===
-get_filename_component(SOLOUD_ROOT ${CMAKE_CURRENT_LIST_DIR}/.. ABSOLUTE)
+set(SOLOUD_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 set(SOLOUD_INCLUDE_DIR ${SOLOUD_ROOT}/include)
 set(SOLOUD_SRC_DIR ${SOLOUD_ROOT}/src)
 
-file(GLOB_RECURSE SOLOUD_HEADERS CONFIGURE_DEPENDS "${SOLOUD_INCLUDE_DIR}/soloud/*.h")
+file(GLOB_RECURSE SOLOUD_HEADERS CONFIGURE_DEPENDS "${SOLOUD_INCLUDE_DIR}/*.h")
 file(GLOB_RECURSE SOLOUD_SOURCES CONFIGURE_DEPENDS
   "${SOLOUD_SRC_DIR}/core/*.cpp"
   "${SOLOUD_SRC_DIR}/filter/*.cpp"
@@ -84,7 +84,7 @@ endif()
 # === C API ===
 if(SOLOUD_C_API)
   list(APPEND SOLOUD_SOURCES ${SOLOUD_SRC_DIR}/c_api/soloud_c.cpp)
-  list(APPEND SOLOUD_HEADERS ${SOLOUD_INCLUDE_DIR}/soloud/soloud_c.h)
+  list(APPEND SOLOUD_HEADERS ${SOLOUD_INCLUDE_DIR}/soloud_c.h)
 endif()
 
 # === Final sources ===
@@ -94,7 +94,10 @@ set(FINAL_SOURCES ${SOLOUD_SOURCES} ${BACKEND_SOURCES} ${SOLOUD_HEADERS})
 if(SOLOUD_BUILD_STATIC)
   add_library(soloud_static STATIC ${FINAL_SOURCES})
   target_compile_definitions(soloud_static PRIVATE _CRT_SECURE_NO_WARNINGS)
-  target_include_directories(soloud_static PUBLIC ${SOLOUD_INCLUDE_DIR} ${SOLOUD_SRC_DIR})
+  target_include_directories(soloud_static PUBLIC
+    $<BUILD_INTERFACE:${SOLOUD_INCLUDE_DIR}>
+    $<BUILD_INTERFACE:${SOLOUD_SRC_DIR}>
+    $<INSTALL_INTERFACE:include>)
   target_link_libraries(soloud_static PRIVATE ${EXTRA_LIBS})
   add_library(soloud::soloud ALIAS soloud_static)
 endif()
@@ -102,7 +105,10 @@ endif()
 if(SOLOUD_BUILD_SHARED)
   add_library(soloud_shared SHARED ${FINAL_SOURCES})
   target_compile_definitions(soloud_shared PRIVATE _CRT_SECURE_NO_WARNINGS)
-  target_include_directories(soloud_shared PUBLIC ${SOLOUD_INCLUDE_DIR} ${SOLOUD_SRC_DIR})
+  target_include_directories(soloud_shared PUBLIC
+    $<BUILD_INTERFACE:${SOLOUD_INCLUDE_DIR}>
+    $<BUILD_INTERFACE:${SOLOUD_SRC_DIR}>
+    $<INSTALL_INTERFACE:include>)
   target_link_libraries(soloud_shared PRIVATE ${EXTRA_LIBS})
   add_library(soloud::soloud ALIAS soloud_shared)
 endif()
@@ -118,7 +124,7 @@ if(SOLOUD_GENERATE_GLUE)
 endif()
 
 # === Install ===
-install(DIRECTORY ${SOLOUD_INCLUDE_DIR}/soloud DESTINATION include)
+install(DIRECTORY ${SOLOUD_INCLUDE_DIR}/ DESTINATION include)
 if(SOLOUD_BUILD_STATIC)
   install(TARGETS soloud_static EXPORT soloudTargets ARCHIVE DESTINATION lib)
 endif()
@@ -138,4 +144,4 @@ install(FILES
   DESTINATION lib/cmake/soloud
 )
 
-message(STATUS "\n✅ SoLoud is configured and ready to sing 🎶")
+message(STATUS "\nSoLoud is configured and ready")
