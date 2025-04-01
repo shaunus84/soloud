@@ -18,7 +18,7 @@ option(SOLOUD_BACKEND_WINMM "Enable WinMM backend (Windows)" OFF)
 option(SOLOUD_BACKEND_WASAPI "Enable WASAPI backend (Windows)" OFF)
 
 # === Paths ===
-set(SOLOUD_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
+get_filename_component(SOLOUD_ROOT ${CMAKE_CURRENT_LIST_DIR}/.. ABSOLUTE)
 set(SOLOUD_INCLUDE_DIR ${SOLOUD_ROOT}/include)
 set(SOLOUD_SRC_DIR ${SOLOUD_ROOT}/src)
 
